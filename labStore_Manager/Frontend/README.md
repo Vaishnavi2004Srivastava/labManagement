@@ -1,4 +1,4 @@
-# Shop Inventory Management MERN Project
+# Lab Inventory Management MERN Project
 
 ## Frontend
 
