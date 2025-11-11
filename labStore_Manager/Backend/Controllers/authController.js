@@ -45,24 +45,29 @@ export const loginController = async (req, res) => {
         // Generate a JWT token
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
 
-        // Set the token as a cookie
-        let options = {
-            maxAge: 1000 * 60 * 15, // would expire after 15 minutes
-            httpOnly: false, // The cookie only accessible by the web server
-            signed: false // Indicates if the cookie should be signed
-        }
-        // console.log(token);
-        res.cookie('token', token);
-        res.status(200).json({ status:true,message: 'Login successful' });
+     let options = {
+            maxAge: 1000 * 60 * 15, // 15 minutes
+            httpOnly: true, // <-- SET TO TRUE for security
+            secure: true,   // <-- ADD THIS (for HTTPS)
+            sameSite: 'None'  // <-- ADD THIS (for cross-domain)
+        }
+        
+        res.cookie('token', token, options); // <--- PASS OPTIONS HERE
+        res.status(200).json({ status:true,message: 'Login successful' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ status:false,message: 'Server error' });
     }
 };
 
+// export const logoutController = (req, res) => {
+//     res.clearCookie('token');
+//     res.status(200).json({ status:true,message: 'Logged out successfully' });
+// };
 export const logoutController = (req, res) => {
-    res.clearCookie('token');
-    res.status(200).json({ status:true,message: 'Logged out successfully' });
+    // Pass the same options so the browser knows which cookie to clear
+    res.clearCookie('token', { secure: true, sameSite: 'None' }); 
+    res.status(200).json({ status:true,message: 'Logged out successfully' });
 };
 
 export const getUserController = async(req, res) => {
