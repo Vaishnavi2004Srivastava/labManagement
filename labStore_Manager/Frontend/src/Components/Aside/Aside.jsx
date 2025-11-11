@@ -39,13 +39,24 @@ const Aside = () => {
         redirect: "follow",
         credentials: "include", //!important
       };
-      const response = await fetch(`${baseUrl}/logout`, requestOptions);
-      const result = await response.json();
-      if (result.status) {
-        console.log("Logout Success");
-        window.location.reload();
-      } else {
-        alert("Something went wrong! try again");
+    try { // 4. --- (Optional) Add try/catch for safety ---
+        const response = await fetch(`${baseUrl}/auth/logout`, requestOptions); // <-- 5. MAKE SURE THIS IS /auth/logout
+        const result = await response.json();
+
+        if (result.status) {
+          console.log("Logout Success");
+          // 6. --- DISPATCH LOGOUT ACTION ---
+          dispatch(setLoginStatus(false)); 
+          // 7. --- REDIRECT TO LOGIN ---
+          navigate('/login'); 
+        } else {
+          alert("Something went wrong! try again");
+        }
+      } catch (error) {
+        console.error("Logout failed:", error);
+        // 8. --- FORCE LOGOUT on error ---
+        dispatch(setLoginStatus(false));
+        navigate('/login');
       }
     }
   };
