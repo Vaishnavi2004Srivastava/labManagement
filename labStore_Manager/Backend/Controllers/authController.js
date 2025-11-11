@@ -46,7 +46,7 @@ export const loginController = async (req, res) => {
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
 
      let options = {
-            maxAge: 1000 * 60 * 15, // 15 minutes
+           maxAge: 1000 * 60 * 60 * 24, // 1 day (in milliseconds)
             httpOnly: true, // <-- SET TO TRUE for security
             secure: true,   // <-- ADD THIS (for HTTPS)
             sameSite: 'None'  // <-- ADD THIS (for cross-domain)
