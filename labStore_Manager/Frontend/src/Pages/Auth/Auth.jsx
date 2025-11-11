@@ -1,179 +1,709 @@
-import React, { useState } from 'react'
+// import React, { useState } from "react";
+// import { setloginStatus } from "../../Redux/login/isLogin";
+// import { useDispatch } from "react-redux";
+// import baseurl from "../../utils/baseurl";
+// import logo from "../../Images/logo.png";
+// import { useForm } from "react-hook-form";
+// import {
+//   EnvelopeIcon,
+//   EyeIcon,
+//   EyeSlashIcon,
+//   KeyIcon,
+// } from "@heroicons/react/24/outline";
+// import { useNavigate } from "react-router-dom";
+// import toast, { Toaster } from "react-hot-toast";
+
+// const Auth = () => {
+//   const [isLoginPage, setisLoginPage] = useState(true);
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+
+//   const [eyePassword, seteyePassword] = useState(false);
+//   const [eyeConfirmPassword, seteyeConfirmPassword] = useState(false);
+
+//   const {
+//     register,
+//     handleSubmit,
+//     formState: { errors },
+//     reset,
+//   } = useForm();
+
+//   const MNNIT_LOGO = logo;
+
+//   // --- Validation Helpers ---
+//   const validateEmail = (email) => {
+//     if (!email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+//       return "Invalid email format";
+//     }
+//   };
+
+//   const validatePassword = (password) => {
+//     let regex =
+//       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+[\]{};':",.<>/?])(?!.*\s).{8,}$/;
+//     if (!password.match(regex)) {
+//       return "Password must meet complexity requirements";
+//     }
+//   };
+
+//   // --- API Helpers ---
+//   const loginUser = async (obj) => {
+//     const loadingToast = toast.loading("Signing in...");
+//     try {
+//       const response = await fetch(`${baseurl}/login`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(obj),
+//         credentials: "include",
+//       });
+//       const result = await response.json();
+//       toast.dismiss(loadingToast);
+
+//       if (result.status) {
+//         dispatch(setloginStatus(true));
+//         toast.success("Welcome back!");
+//         setTimeout(() => navigate("/"), 1000);
+//       } else {
+//         toast.error(result.message || "Invalid credentials");
+//       }
+//     } catch (error) {
+//       toast.dismiss(loadingToast);
+//       toast.error("Connection error. Please try again.");
+//       console.error("Auth Error:", error);
+//     }
+//   };
+
+//   const registerUser = async (obj) => {
+//     const loadingToast = toast.loading("Creating account...");
+//     try {
+//       const response = await fetch(`${baseurl}/register`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(obj),
+//         credentials: "include",
+//       });
+//       const result = await response.json();
+//       toast.dismiss(loadingToast);
+
+//       if (result.status) {
+//         toast.success("Registration successful! Please log in.");
+//         setisLoginPage(true);
+//         reset();
+//       } else {
+//         toast.error(result.message || "Registration failed");
+//       }
+//     } catch (error) {
+//       toast.dismiss(loadingToast);
+//       toast.error("Connection error. Please try again.");
+//       console.error("Auth Error:", error);
+//     }
+//   };
+
+//   const onSubmit = (data) => {
+//     if (!isLoginPage) {
+//       // Registration Logic
+//       if (data.password !== data.cpassword) {
+//         toast.error("Passwords do not match");
+//         return;
+//       }
+//       // Remove cpassword before sending to API if backend doesn't need it
+//       const { cpassword, ...registerData } = data;
+//       registerUser(registerData);
+//     } else {
+//       // Login Logic
+//       loginUser(data);
+//     }
+//   };
+
+//   // --- Reusable Input Styles ---
+//   const inputContainerClass =
+//     "flex items-center px-3 py-2.5 border rounded-xl bg-gray-50 focus-within:bg-white focus-within:ring-2 focus-within:ring-indigo-500/30 focus-within:border-indigo-500 transition-all duration-200 ease-in-out";
+//   const inputErrorClass =
+//     "border-red-300 bg-red-50/50 focus-within:ring-red-500/30 focus-within:border-red-500";
+
+//   return (
+//     <main className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-slate-100 via-gray-50 to-slate-100 py-12 sm:px-6 lg:px-8">
+//       {/* --- HEADER --- */}
+//       <div className="sm:mx-auto sm:w-full sm:max-w-md mb-8 flex flex-col items-center">
+//         <img
+//           className="h-28 w-auto drop-shadow-sm transition-transform hover:scale-105 duration-300"
+//           src={MNNIT_LOGO}
+//           alt="MNNIT Logo"
+//         />
+//         <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-900">
+//           MNNIT Allahabad
+//         </h2>
+//       </div>
+
+//       {/* --- MAIN CARD --- */}
+//       <div className="sm:mx-auto sm:w-full sm:max-w-[480px]">
+//         <div className="bg-white py-10 px-6 shadow-xl shadow-slate-200/60 sm:rounded-2xl sm:px-12 border border-slate-100">
+//           <div className="mb-8">
+//             <h3 className="text-2xl font-semibold text-slate-800">
+//               {isLoginPage ? "Welcome back" : "Create an account"}
+//             </h3>
+//             <p className="text-sm text-slate-500 mt-1">
+//               {isLoginPage
+//                 ? "Please enter your details to sign in."
+//                 : "Fill in the details below to get started."}
+//             </p>
+//           </div>
+
+//           <form
+//             onSubmit={handleSubmit(onSubmit)}
+//             className="space-y-5"
+//             autoComplete="off"
+//             noValidate
+//           >
+//             {/* Email Field */}
+//             <div>
+//               <label className="block text-sm font-medium text-slate-700 mb-1.5 ml-1">
+//                 Email Address
+//               </label>
+//               <div
+//                 className={`${inputContainerClass} ${
+//                   errors.email ? inputErrorClass : "border-gray-200"
+//                 }`}
+//               >
+//                 <EnvelopeIcon
+//                   className={`h-5 w-5 mr-3 ${
+//                     errors.email ? "text-red-400" : "text-slate-400"
+//                   }`}
+//                 />
+//                 <input
+//                   type="email"
+//                   className="flex-1 bg-transparent outline-none placeholder:text-slate-400 text-slate-700 text-sm"
+//                   placeholder="you@mnnit.ac.in"
+//                   {...register("email", { validate: validateEmail })}
+//                 />
+//               </div>
+//               {errors.email && (
+//                 <p className="mt-1.5 ml-1 text-xs text-red-600 font-medium">
+//                   {errors.email.message}
+//                 </p>
+//               )}
+//             </div>
+
+//             {/* Password Field */}
+//             <div>
+//               <label className="block text-sm font-medium text-slate-700 mb-1.5 ml-1">
+//                 Password
+//               </label>
+//               <div
+//                 className={`${inputContainerClass} ${
+//                   errors.password ? inputErrorClass : "border-gray-200"
+//                 }`}
+//               >
+//                 <KeyIcon
+//                   className={`h-5 w-5 mr-3 ${
+//                     errors.password ? "text-red-400" : "text-slate-400"
+//                   }`}
+//                 />
+//                 <input
+//                   type={eyePassword ? "text" : "password"}
+//                   className="flex-1 bg-transparent outline-none placeholder:text-slate-400 text-slate-700 text-sm"
+//                   placeholder="••••••••"
+//                   {...register("password", { validate: validatePassword })}
+//                 />
+//                 <button
+//                   type="button"
+//                   onClick={() => seteyePassword(!eyePassword)}
+//                   className="ml-2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+//                   tabIndex="-1"
+//                 >
+//                   {eyePassword ? (
+//                     <EyeSlashIcon className="h-5 w-5" />
+//                   ) : (
+//                     <EyeIcon className="h-5 w-5" />
+//                   )}
+//                 </button>
+//               </div>
+//               {errors.password ? (
+//                 <p className="mt-1.5 ml-1 text-xs text-red-600 font-medium">
+//                   {errors.password.message}
+//                 </p>
+//               ) : (
+//                 !isLoginPage && (
+//                   <p className="mt-1.5 ml-1 text-xs text-slate-500">
+//                     Min 8 chars, 1 uppercase, 1 number, 1 special.
+//                   </p>
+//                 )
+//               )}
+//             </div>
+
+//             {/* Confirm Password Field */}
+//             {!isLoginPage && (
+//               <div className="animate-fadeIn">
+//                 <label className="block text-sm font-medium text-slate-700 mb-1.5 ml-1">
+//                   Confirm Password
+//                 </label>
+//                 <div
+//                   className={`${inputContainerClass} ${
+//                     errors.cpassword ? inputErrorClass : "border-gray-200"
+//                   }`}
+//                 >
+//                   <KeyIcon
+//                     className={`h-5 w-5 mr-3 ${
+//                       errors.cpassword ? "text-red-400" : "text-slate-400"
+//                     }`}
+//                   />
+//                   <input
+//                     type={eyeConfirmPassword ? "text" : "password"}
+//                     className="flex-1 bg-transparent outline-none placeholder:text-slate-400 text-slate-700 text-sm"
+//                     placeholder="••••••••"
+//                     {...register("cpassword", {
+//                       validate: (val, formValues) =>
+//                         val === formValues.password || "Passwords do not match",
+//                     })}
+//                   />
+//                   <button
+//                     type="button"
+//                     onClick={() => seteyeConfirmPassword(!eyeConfirmPassword)}
+//                     className="ml-2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+//                     tabIndex="-1"
+//                   >
+//                     {eyeConfirmPassword ? (
+//                       <EyeSlashIcon className="h-5 w-5" />
+//                     ) : (
+//                       <EyeIcon className="h-5 w-5" />
+//                     )}
+//                   </button>
+//                 </div>
+//                 {errors.cpassword && (
+//                   <p className="mt-1.5 ml-1 text-xs text-red-600 font-medium">
+//                     {errors.cpassword.message}
+//                   </p>
+//                 )}
+//               </div>
+//             )}
+
+//             {/* Submit Button */}
+//             <div className="pt-4">
+//               <button
+//                 type="submit"
+//                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 active:scale-[0.98]"
+//               >
+//                 {isLoginPage ? "Sign In" : "Create Account"}
+//               </button>
+//             </div>
+//           </form>
+
+//           {/* Divider */}
+//           <div className="mt-8">
+//             <div className="relative">
+//               <div className="absolute inset-0 flex items-center">
+//                 <div className="w-full border-t border-slate-200"></div>
+//               </div>
+//               <div className="relative flex justify-center text-sm">
+//                 <span className="px-4 bg-white text-slate-500">or</span>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* Toggle Login/Register */}
+//           <div className="mt-6 text-center">
+//             <p className="text-sm text-slate-600">
+//               {isLoginPage
+//                 ? "New to the portal? "
+//                 : "Already have an account? "}
+//               <button
+//                 onClick={() => {
+//                   setisLoginPage(!isLoginPage);
+//                   reset();
+//                   seteyePassword(false);
+//                   seteyeConfirmPassword(false);
+//                 }}
+//                 className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors focus:outline-none focus:underline"
+//               >
+//                 {isLoginPage ? "Create an account" : "Sign in here"}
+//               </button>
+//             </p>
+//           </div>
+//         </div>
+
+//         {/* --- FOOTER --- */}
+//         <div className="mt-8 text-center animate-fadeIn">
+//           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">
+//             Developed by Team
+//           </p>
+//           <div className="flex flex-wrap justify-center items-center gap-3 text-sm text-slate-600 font-medium">
+//             <span className="hover:text-indigo-600 transition-colors cursor-default">
+//               Vaishnavi Srivastava
+//             </span>
+//             <span className="text-slate-300">•</span>
+//             <span className="hover:text-indigo-600 transition-colors cursor-default">
+//               Shrujal Patel
+//             </span>
+//             <span className="text-slate-300">•</span>
+//             <span className="hover:text-indigo-600 transition-colors cursor-default">
+//               Alankrit Gond
+//             </span>
+//           </div>
+//         </div>
+//       </div>
+//       <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
+//     </main>
+//   );
+// };
+
+// export default Auth;
+import React, { useState } from "react";
 import { setloginStatus } from "../../Redux/login/isLogin";
-import { useDispatch } from 'react-redux';
-import baseurl from '../../utils/baseurl';
-
-import { useForm } from 'react-hook-form';
-import { EnvelopeIcon, EyeIcon, EyeSlashIcon, KeyIcon } from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom';
-
-import toast, { Toaster } from 'react-hot-toast';
+import { useDispatch } from "react-redux";
+import baseurl from "../../utils/baseurl";
+import logo from "../../Images/logo.png";
+import { useForm } from "react-hook-form";
+import {
+  EnvelopeIcon,
+  EyeIcon,
+  EyeSlashIcon,
+  KeyIcon,
+} from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const Auth = () => {
-    const [isLoginPage, setisLoginPage] = useState(true);
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const [isLoginPage, setisLoginPage] = useState(true);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    const [eyePassword, seteyePassword] = useState(false);
-    const [eyeConfirmPassword, seteyeConfirmPassword] = useState(false);
+  const [eyePassword, seteyePassword] = useState(false);
+  const [eyeConfirmPassword, seteyeConfirmPassword] = useState(false);
 
-    const { register, handleSubmit, formState: { errors }, reset } = useForm({/** resolver: yupResolver(schema), */ });
-    const validateEmail = (email) => {
-        if (!email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
-            return "Invalid email format";
-        };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+
+  const MNNIT_LOGO = logo;
+
+  // --- Validation Helpers ---
+  const validateEmail = (email) => {
+    if (!email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+      return "Invalid email format";
     }
-    const validatePassword = (password) => {
-        let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+[\]{};':",.<>/?])(?!.*\s).{8,}$/g;
-        // let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+[\]{};':",.<>/?])(?!.*\s)/g;
-        if (!password.match(regex)) {
-            return "invalid password format";
-        };
+  };
+
+  const validatePassword = (password) => {
+    let regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+[\]{};':",.<>/?])(?!.*\s).{8,}$/;
+    if (!password.match(regex)) {
+      return "Password must meet complexity requirements";
     }
+  };
 
-    const loginUser = async (obj) => {
-        let myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        let requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: JSON.stringify(obj),
-            redirect: 'follow',
-            credentials: 'include' //!important
-        };
+  // --- API Helpers ---
+  const loginUser = async (obj) => {
+    const loadingToast = toast.loading("Signing in...");
+    try {
+      const response = await fetch(`${baseurl}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(obj),
+        credentials: "include",
+      });
+      const result = await response.json();
+      toast.dismiss(loadingToast);
 
-        try {
-            const response = await fetch(`${baseurl}/login`, requestOptions);
-            const result = await response.json();
-            if (result.status) {
-                dispatch(setloginStatus(true));
-                toast.success("Login success");
-                setTimeout(() => {
-                    navigate("/");
-                }, 1500);
-            } else {
-                toast.error("Invalid credentials");
-                console.log('Error::Auth::loginUser::result', result.message)
-            }
-        } catch (error) {
-            toast.error("Something went wrong! ty again");
-            console.log('Error::Auth::loginUser', error)
-        }
+      if (result.status) {
+        dispatch(setloginStatus(true));
+        toast.success("Welcome back!");
+        setTimeout(() => navigate("/"), 1000);
+      } else {
+        toast.error(result.message || "Invalid credentials");
+      }
+    } catch (error) {
+      toast.dismiss(loadingToast);
+      toast.error("Connection error. Please try again.");
+      console.error("Auth Error:", error);
     }
+  };
 
-    const registerUser = async (obj) => {
-        let myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        let requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: JSON.stringify(obj),
-            redirect: 'follow',
-            credentials: 'include' //!important
-        };
+  const registerUser = async (obj) => {
+    const loadingToast = toast.loading("Creating account...");
+    try {
+      const response = await fetch(`${baseurl}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(obj),
+        credentials: "include",
+      });
+      const result = await response.json();
+      toast.dismiss(loadingToast);
 
-        try {
-            const response = await fetch(`${baseurl}/register`, requestOptions)
-            const result = await response.json();
-            if (result.status) {
-                toast.success("Registration success! Login to account");
-                setisLoginPage(!isLoginPage);
-            } else {
-                toast.error("Something went wrong! ty again");
-                console.log('Error::Auth::registerUser::result', result.message)
-            }
-        } catch (error) {
-            toast.error("Something went wrong! ty again");
-            console.log('Error::Auth::registerUser', error)
-        }
+      if (result.status) {
+        toast.success("Registration successful! Please log in.");
+        setisLoginPage(true);
+        reset();
+      } else {
+        toast.error(result.message || "Registration failed");
+      }
+    } catch (error) {
+      toast.dismiss(loadingToast);
+      toast.error("Connection error. Please try again.");
+      console.error("Auth Error:", error);
     }
+  };
 
-    const onSubmit = (data) => {
-        console.log(data);
-        if (data.btnOption === "REGISTER") {
-            // register btn is clicked:
-            if (data.password !== data.cpassword) {
-                alert("Password and comfirm password DO Not match!");
-                return false;
-            }
-            registerUser(data);
-            return false;
-        }
-        // else login btn clicked:
-        loginUser(data)
-        return false;
+  const onSubmit = (data) => {
+    if (!isLoginPage) {
+      if (data.password !== data.cpassword) {
+        toast.error("Passwords do not match");
+        return;
+      }
+      const { cpassword, ...registerData } = data;
+      registerUser(registerData);
+    } else {
+      loginUser(data);
     }
-    return (
-        <main className='px-4 md:w-2/3 md:mx-auto'>
-            <div className="h2 text-center text-xl font-bold">{isLoginPage ? "Login into Account" : "Register Account"}</div>
-            <div className='flex justify-center  mx-auto mt-4'>
-                <form onSubmit={handleSubmit(onSubmit)} className='w-full lg:max-w-xs' autoComplete='off' noValidate>
-                    {/* email */}
-                    <label className={`input input-bordered flex items-center gap-2 rounded-lg ${errors.email ? "input-error" : "input-success"} `}>
-                        <EnvelopeIcon className="h-4 w-4 opacity-70" />
-                        <input type="text" name='email' className="grow bg-transparent " placeholder="Email"
-                            {...register('email', { validate: validateEmail })} />
-                    </label>
-                    <div className="label-text text-xs text-error h-8 pt-2">
-                        {errors.email && <p>{errors.email.message}</p>}
-                    </div>
+  };
 
+  // --- Styles ---
+  // Updated for Navy Blue theme with Dark Mode support
+  const inputContainerClass =
+    "flex items-center px-3 py-2.5 border rounded-xl transition-all duration-200 ease-in-out " +
+    // Light Mode
+    "bg-slate-50 border-slate-200 focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-900/20 focus-within:border-blue-900 " +
+    // Dark Mode
+    "dark:bg-slate-900/50 dark:border-slate-700 dark:focus-within:bg-slate-900 dark:focus-within:ring-blue-500/30 dark:focus-within:border-blue-500";
 
-                    {/* password */}
-                    <label className={`input input-bordered flex items-center gap-2 rounded-lg ${errors.password ? "input-error" : "input-success"} `}>
-                        <KeyIcon className="h-4 w-4 opacity-70" />
-                        <input type={eyePassword ? "text" : "password"} name='password' className="grow bg-transparent" placeholder="password"
-                            {...register('password', { validate: validatePassword })} />
-                        {eyePassword ? <EyeIcon className="h-4 w-4 opacity-70" onClick={() => { seteyePassword(!eyePassword) }} />
-                            :
-                            <EyeSlashIcon className="h-4 w-4 opacity-70" onClick={() => { seteyePassword(!eyePassword) }} />}
-                    </label>
+  const inputErrorClass =
+    // Light Mode
+    "!border-red-300 !bg-red-50/50 focus-within:!ring-red-500/30 focus-within:!border-red-500 " +
+    // Dark Mode
+    "dark:!bg-red-900/10 dark:!border-red-800/50";
 
-                    <div className="label-text text-xs text-error h-8 pt-2">
-                        {errors.password && <p>{errors.password.message}</p>}
-                    </div>
-                    <div className="label">
-                        <span className="label-text text-xs text-gray-500">Min 8 chars and must include Uppercase, Lowercase, Number and Special character.</span>
-                    </div>
+  const labelClass =
+    "block text-sm font-medium mb-1.5 ml-1 text-slate-700 dark:text-slate-300";
+  const iconClass = (hasError) =>
+    `h-5 w-5 mr-3 ${
+      hasError ? "text-red-400" : "text-slate-400 dark:text-slate-500"
+    }`;
 
-                    {/* confirm password */}
-                    {!isLoginPage && (<>
-                        <label className={`input input-bordered flex items-center gap-2 rounded-lg ${errors.cpassword ? "input-error" : "input-success"} `}>
+  return (
+    <main className="min-h-screen flex flex-col justify-center items-center py-12 sm:px-6 lg:px-8 transition-colors duration-300 bg-slate-100 dark:bg-[#0B1120]">
+      {/* --- HEADER --- */}
+      <div className="sm:mx-auto sm:w-full sm:max-w-md mb-8 flex flex-col items-center">
+        {/* Optional: Add a white background circle to logo if it's transparent and hard to see in dark mode */}
+        <div className="p-2 rounded-full">
+          <img
+            className="h-28 w-auto drop-shadow-sm transition-transform hover:scale-105 duration-300"
+            src={MNNIT_LOGO}
+            alt="MNNIT Logo"
+          />
+        </div>
 
-                            <KeyIcon className="h-4 w-4 opacity-70" />
-                            <input type={eyeConfirmPassword ? "password" : "text"} name='cpassword' className="grow bg-transparent" placeholder="confirm password"
-                                {...register('cpassword', { validate: validatePassword })} />
-                            {!eyeConfirmPassword ? <EyeIcon className="h-4 w-4 opacity-70" onClick={() => { seteyeConfirmPassword(!eyeConfirmPassword) }} />
-                                :
-                                <EyeSlashIcon className="h-4 w-4 opacity-70" onClick={() => { seteyeConfirmPassword(!eyeConfirmPassword) }} />}
-                        </label>
-                        <div className="label-text text-xs text-error h-8 pt-2">
-                            {errors.cpassword && <p>{errors.cpassword.message}</p>}
-                        </div>
-                    </>)}
+        <h2 className="mt-6 text-3xl font-bold tracking-tight text-blue-950 dark:text-slate-100">
+          MNNIT Allahabad
+        </h2>
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400 font-medium">
+          Biotechnology Department
+        </p>
+      </div>
 
-                    <input type="hidden" name='btnOption' {...register('btnOption')} id='btnHiddenForm' />
+      {/* --- MAIN CARD --- */}
+      <div className="sm:mx-auto sm:w-full sm:max-w-[480px]">
+        <div className="py-10 px-6 shadow-xl sm:rounded-2xl sm:px-12 border transition-colors duration-300 bg-white border-slate-200 shadow-slate-200/50 dark:bg-slate-800 dark:border-slate-700 dark:shadow-black/30">
+          <div className="mb-8">
+            <h3 className="text-2xl font-semibold text-blue-950 dark:text-white">
+              {isLoginPage ? "Welcome back" : "Create an account"}
+            </h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              {isLoginPage
+                ? "Please enter your details to sign in."
+                : "Fill in the details below to get started."}
+            </p>
+          </div>
 
-                    {isLoginPage ? (<input type="submit" className='btn w-full lg:max-w-xs btn-primary mt-4' value="Login"
-                        onClick={() => { reset({"btnOption":"LOGIN"}) }} />)
-                        : (<input type="submit" className='btn w-full lg:max-w-xs btn-primary mt-4' value="Register"
-                            onClick={() => { reset({"btnOption":"REGISTER"}) }} />)
-                    }
-                </form>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-5"
+            autoComplete="off"
+            noValidate
+          >
+            {/* Email Field */}
+            <div>
+              <label className={labelClass}>Email Address</label>
+              <div
+                className={`${inputContainerClass} ${
+                  errors.email ? inputErrorClass : ""
+                }`}
+              >
+                <EnvelopeIcon className={iconClass(errors.email)} />
+                <input
+                  type="email"
+                  className="flex-1 bg-transparent outline-none text-sm text-blue-950 placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500"
+                  placeholder="you@mnnit.ac.in"
+                  {...register("email", { validate: validateEmail })}
+                />
+              </div>
+              {errors.email && (
+                <p className="mt-1.5 ml-1 text-xs text-red-600 dark:text-red-400 font-medium">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
-            <div className="more text-center mt-4">
-                <h5>OR</h5>
-                {isLoginPage ? (<div>Do not have account? <span className='underline cursor-pointer'
-                    onClick={() => { setisLoginPage(!isLoginPage) }}>Register</span></div>)
-                    : (<div>Already have account? <span className='underline cursor-pointer'
-                        onClick={() => { setisLoginPage(!isLoginPage) }}>Login</span></div>)
-                }
+            {/* Password Field */}
+            <div>
+              <label className={labelClass}>Password</label>
+              <div
+                className={`${inputContainerClass} ${
+                  errors.password ? inputErrorClass : ""
+                }`}
+              >
+                <KeyIcon className={iconClass(errors.password)} />
+                <input
+                  type={eyePassword ? "text" : "password"}
+                  className="flex-1 bg-transparent outline-none text-sm text-blue-950 placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500"
+                  placeholder="••••••••"
+                  {...register("password", { validate: validatePassword })}
+                />
+                <button
+                  type="button"
+                  onClick={() => seteyePassword(!eyePassword)}
+                  className="ml-2 text-slate-400 hover:text-blue-900 dark:hover:text-slate-200 focus:outline-none transition-colors"
+                  tabIndex="-1"
+                >
+                  {eyePassword ? (
+                    <EyeSlashIcon className="h-5 w-5" />
+                  ) : (
+                    <EyeIcon className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              {errors.password ? (
+                <p className="mt-1.5 ml-1 text-xs text-red-600 dark:text-red-400 font-medium">
+                  {errors.password.message}
+                </p>
+              ) : (
+                !isLoginPage && (
+                  <p className="mt-1.5 ml-1 text-xs text-slate-500 dark:text-slate-400">
+                    Min 8 chars, 1 uppercase, 1 number, 1 special.
+                  </p>
+                )
+              )}
             </div>
 
-            <Toaster />
-        </main>
-    )
-}
+            {/* Confirm Password Field */}
+            {!isLoginPage && (
+              <div className="animate-fadeIn">
+                <label className={labelClass}>Confirm Password</label>
+                <div
+                  className={`${inputContainerClass} ${
+                    errors.cpassword ? inputErrorClass : ""
+                  }`}
+                >
+                  <KeyIcon className={iconClass(errors.cpassword)} />
+                  <input
+                    type={eyeConfirmPassword ? "text" : "password"}
+                    className="flex-1 bg-transparent outline-none text-sm text-blue-950 placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500"
+                    placeholder="••••••••"
+                    {...register("cpassword", {
+                      validate: (val, formValues) =>
+                        val === formValues.password || "Passwords do not match",
+                    })}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => seteyeConfirmPassword(!eyeConfirmPassword)}
+                    className="ml-2 text-slate-400 hover:text-blue-900 dark:hover:text-slate-200 focus:outline-none transition-colors"
+                    tabIndex="-1"
+                  >
+                    {eyeConfirmPassword ? (
+                      <EyeSlashIcon className="h-5 w-5" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+                {errors.cpassword && (
+                  <p className="mt-1.5 ml-1 text-xs text-red-600 dark:text-red-400 font-medium">
+                    {errors.cpassword.message}
+                  </p>
+                )}
+              </div>
+            )}
 
-export default Auth
+            {/* Submit Button */}
+            <div className="pt-4">
+              <button
+                type="submit"
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white transition-all duration-200 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-950 hover:bg-blue-900 focus:ring-blue-950 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-500 dark:ring-offset-slate-800"
+              >
+                {isLoginPage ? "Sign In" : "Create Account"}
+              </button>
+            </div>
+          </form>
+
+          {/* Divider */}
+          <div className="mt-8">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-slate-200 dark:border-slate-700"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors duration-300">
+                  or
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Toggle Login/Register */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              {isLoginPage
+                ? "New to the portal? "
+                : "Already have an account? "}
+              <button
+                onClick={() => {
+                  setisLoginPage(!isLoginPage);
+                  reset();
+                  seteyePassword(false);
+                  seteyeConfirmPassword(false);
+                }}
+                className="font-bold text-blue-950 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors focus:outline-none focus:underline"
+              >
+                {isLoginPage ? "Create an account" : "Sign in here"}
+              </button>
+            </p>
+          </div>
+        </div>
+
+        {/* --- FOOTER --- */}
+        <div className="mt-8 text-center animate-fadeIn">
+          <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">
+            Developed by Team
+          </p>
+          <div className="flex flex-wrap justify-center items-center gap-3 text-sm text-slate-600 dark:text-slate-400 font-medium">
+            <span className="hover:text-blue-900 dark:hover:text-blue-400 transition-colors cursor-default">
+              Vaishnavi Srivastava
+            </span>
+            <span className="text-slate-300 dark:text-slate-600">•</span>
+            <span className="hover:text-blue-900 dark:hover:text-blue-400 transition-colors cursor-default">
+              Shrujal Patel
+            </span>
+            <span className="text-slate-300 dark:text-slate-600">•</span>
+            <span className="hover:text-blue-900 dark:hover:text-blue-400 transition-colors cursor-default">
+              Alankrit Gond
+            </span>
+          </div>
+        </div>
+      </div>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#334155", // dark slate for better neutrality in both modes
+            color: "#fff",
+          },
+        }}
+      />
+    </main>
+  );
+};
+
+export default Auth;
