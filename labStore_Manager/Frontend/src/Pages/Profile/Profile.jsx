@@ -58,7 +58,7 @@ const Profile = () => {
                   <div>{user.email}</div>
                 </div>
 
-                <div className="section mt-8 text-sm flex gap-x-2">
+                {/* <div className="section mt-8 text-sm flex gap-x-2">
                   <div className="products h-20 border rounded-lg p-2 w-1/2">
                     <div>Total Products:</div>
                     <div className='text-xl font-bold'> {user.products.length}</div>
@@ -67,7 +67,7 @@ const Profile = () => {
                     <div>Total Sales:</div>
                     <div className='text-xl font-bold'> {user.sales.length} </div>
                   </div>
-                </div>
+                </div> */}
 
               </div>
             </div>
