@@ -10,10 +10,11 @@ import { Link, useLocation } from "react-router-dom";
 import baseUrl from "../../utils/baseurl";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedCategory } from "../../Redux/products/productSlice";
-
+import { setloginStatus } from "../../Redux/login/isLogin";
 const Aside = () => {
   const location = useLocation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const selectedCategory = useSelector(
     (state) => state.product.selectedCategory
   );
@@ -40,13 +41,13 @@ const Aside = () => {
         credentials: "include", //!important
       };
     try { // 4. --- (Optional) Add try/catch for safety ---
-        const response = await fetch(`${baseUrl}/auth/logout`, requestOptions); // <-- 5. MAKE SURE THIS IS /auth/logout
+        const response = await fetch(`${baseUrl}/logout`, requestOptions); // <-- 5. MAKE SURE THIS IS /auth/logout
         const result = await response.json();
 
         if (result.status) {
           console.log("Logout Success");
           // 6. --- DISPATCH LOGOUT ACTION ---
-          dispatch(setLoginStatus(false)); 
+          dispatch(setloginStatus(false)); 
           // 7. --- REDIRECT TO LOGIN ---
           navigate('/login'); 
         } else {
