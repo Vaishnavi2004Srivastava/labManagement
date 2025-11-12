@@ -6,7 +6,7 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation,useNavigate } from "react-router-dom";
 import baseUrl from "../../utils/baseurl";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedCategory } from "../../Redux/products/productSlice";
