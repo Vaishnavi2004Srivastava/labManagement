@@ -428,7 +428,9 @@ const Dashboard = () => {
 
                   <ul
                     tabIndex={0}
-                    className="dropdown-content menu p-2 shadow bg-gray-900 bg-opacity-100 text-white rounded-box w-52"
+                    className="dropdown-content z-50  menu p-2 shadow bg-gray-900 dark:bg-gray-900 
+             text-white rounded-box w-52 !bg-opacity-100 backdrop-blur-none 
+             glass-none"
                   >
                     <li>
                       <button onClick={downloadAllProducts}>
