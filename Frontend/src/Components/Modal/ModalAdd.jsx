@@ -304,7 +304,7 @@ const ModalAdd = (props) => {
                   <span className="label-text">Quantity Ordered</span>
                 </div>
                 <input
-                  type="number"
+                  type="text"
                   {...register("quantityOrdered", {
                     validate: (v) => validateQuantity(v, "Quantity Ordered"),
                   })}
@@ -325,7 +325,7 @@ const ModalAdd = (props) => {
                   <span className="label-text">Quantity Available</span>
                 </div>
                 <input
-                  type="number"
+                  type="text"
                   {...register("quantityAvailable", {
                     validate: (v) => validateQuantity(v, "Quantity Available"),
                   })}
