@@ -221,7 +221,7 @@ const Dashboard = () => {
     document.body.removeChild(link);
   };
 
-  // --- 3. UPDATED TABLE HEADERS TO CHECK ROLE ---
+  // --- 3. UPDATED TABLE HEADERS TO CHECK ROLE & CATEGORY ---
   const renderTableHeaders = () => {
     switch (selectedCategory) {
       case "chemical":
@@ -230,7 +230,8 @@ const Dashboard = () => {
           <tr>
             <th>S.No</th>
             <th>Name</th>
-            <th>Storage Temp</th>
+            {/* --- CHANGED: Only show Storage Temp if category is chemical --- */}
+            {selectedCategory === "chemical" && <th>Storage Temp</th>}
             <th>Qty Ordered</th>
             <th>Qty Available</th>
             <th>Brand</th>
@@ -310,7 +311,7 @@ const Dashboard = () => {
       </>
     );
 
-    // --- 5. UPDATED TABLE ROWS TO CHECK ROLE ---
+    // --- 5. UPDATED TABLE ROWS TO CHECK ROLE & CATEGORY ---
     switch (elem.category) {
       case "chemical":
       case "teaching_kit":
@@ -323,7 +324,8 @@ const Dashboard = () => {
               </div>
             </th>
             <td>{elem.name}</td>
-            <td>{elem.storageTemp}</td>
+            {/* --- CHANGED: Only render Storage Temp cell if category is chemical --- */}
+            {elem.category === "chemical" && <td>{elem.storageTemp}</td>}
             <td>{elem.quantityOrdered}</td>
             <td>{elem.quantityAvailable}</td>
             <td>{elem.brand}</td>

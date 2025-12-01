@@ -11,52 +11,74 @@ const ModalUpdate = (props) => {
     reset,
   } = useForm({});
 
-  // Validation functions
-  const validateField = (value, fieldName) => {
+  // --- Strict validation ONLY for required fields (Name) ---
+  const validateRequired = (value, fieldName) => {
     if (!String(value).trim()) {
-      return `${fieldName} cannot be empty`;
+      return `${fieldName} is required`;
     }
   };
 
+  // --- Quantity is optional, but if entered, must not be negative ---
   const validateQuantity = (value, fieldName) => {
-    if (!String(value).trim()) {
-      return `${fieldName} cannot be empty`;
-    }
-    if (value < 0) {
+    // If empty, return true (valid)
+    if (!value || String(value).trim() === "") return true;
+
+    // If value exists, check if negative
+    if (Number(value) < 0) {
       return `${fieldName} cannot be negative`;
     }
+    return true;
   };
 
   const onSubmit = async (data) => {
+    // 1. Create a copy of the data
+    const cleanData = { ...data };
+
+    // 2. CLEANUP: If Date of Purchase is empty, delete the key entirely
+    if (!cleanData.dateOfPurchase || cleanData.dateOfPurchase.trim() === "") {
+      delete cleanData.dateOfPurchase;
+    }
+
+    // 3. CLEANUP: If Date of Expiry is empty, delete the key entirely
+    if (!cleanData.dateOfExpiry || cleanData.dateOfExpiry.trim() === "") {
+      delete cleanData.dateOfExpiry;
+    }
+
+    // 4. CLEANUP: If Quantity/Storage are empty, delete them
+    if (!cleanData.quantityOrdered) delete cleanData.quantityOrdered;
+    if (!cleanData.quantityAvailable) delete cleanData.quantityAvailable;
+    if (!cleanData.storageTemp) delete cleanData.storageTemp;
+
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     let requestOptions = {
       method: "POST",
       headers: myHeaders,
-      body: JSON.stringify({ productId: props.updateObj.pid, newdata: data }),
+      body: JSON.stringify({
+        productId: props.updateObj.pid,
+        newdata: cleanData, // Send the cleaned data
+      }),
       redirect: "follow",
-      credentials: "include", //!important
+      credentials: "include",
     };
 
     try {
       const response = await fetch(
         `${baseUrl}/products/update`,
         requestOptions
-      ); // Updated API endpoint
+      );
       const result = await response.json();
       if (result.status) {
         toast.success("Product updated successfully");
-        // to refresh,
-        props.fetchProductsByCategory(props.selectedCategory); // Pass category to refetch
+        props.fetchProductsByCategory(props.selectedCategory);
       } else {
-        toast.error("Something went wrong! try again");
+        toast.error(result.message || "Something went wrong! try again");
         console.log("Error::Modal Update::result", result.message);
       }
     } catch (error) {
       toast.error("Something went wrong! try again");
       console.log("Error::Modal Update::", error);
     } finally {
-      // close dialog
       document.getElementById(props.id).close();
     }
   };
@@ -64,7 +86,6 @@ const ModalUpdate = (props) => {
   const closeForm = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    // close dialog
     document.getElementById(props.id).close();
   };
 
@@ -93,24 +114,20 @@ const ModalUpdate = (props) => {
       case "teaching_kit":
         return (
           <>
-            <label className="form-control w-full lg:max-w-xs px-2">
-              <div className="label">
-                <span className="label-text">Storage Temperature</span>
-              </div>
-              <input
-                type="text"
-                {...register("storageTemp", {
-                  validate: (v) => validateField(v, "Storage Temperature"),
-                })}
-                name="storageTemp"
-                placeholder="e.g., 2-8°C"
-                className="input input-bordered w-full lg:max-w-xs"
-              />
-            </label>
-            {errors.storageTemp && (
-              <p className="text-xs text-red-600 ps-2 mt-1">
-                {errors.storageTemp.message}
-              </p>
+            {/* --- Only show Storage Temp if category is 'chemical' --- */}
+            {props.updateObj.category === "chemical" && (
+              <label className="form-control w-full lg:max-w-xs px-2">
+                <div className="label">
+                  <span className="label-text">Storage Temperature</span>
+                </div>
+                <input
+                  type="text"
+                  {...register("storageTemp")}
+                  name="storageTemp"
+                  placeholder="e.g., 2-8°C"
+                  className="input input-bordered w-full lg:max-w-xs"
+                />
+              </label>
             )}
 
             <label className="form-control w-full lg:max-w-xs px-2">
@@ -119,19 +136,12 @@ const ModalUpdate = (props) => {
               </div>
               <input
                 type="text"
-                {...register("brand", {
-                  validate: (v) => validateField(v, "Brand"),
-                })}
+                {...register("brand")}
                 name="brand"
                 placeholder="Type here"
                 className="input input-bordered w-full lg:max-w-xs"
               />
             </label>
-            {errors.brand && (
-              <p className="text-xs text-red-600 ps-2 mt-1">
-                {errors.brand.message}
-              </p>
-            )}
 
             <label className="form-control w-full lg:max-w-xs px-2">
               <div className="label">
@@ -139,19 +149,12 @@ const ModalUpdate = (props) => {
               </div>
               <input
                 type="text"
-                {...register("lotNo", {
-                  validate: (v) => validateField(v, "Lot Number"),
-                })}
+                {...register("lotNo")}
                 name="lotNo"
                 placeholder="Type here"
                 className="input input-bordered w-full lg:max-w-xs"
               />
             </label>
-            {errors.lotNo && (
-              <p className="text-xs text-red-600 ps-2 mt-1">
-                {errors.lotNo.message}
-              </p>
-            )}
 
             <label className="form-control w-full lg:max-w-xs px-2">
               <div className="label">
@@ -159,40 +162,25 @@ const ModalUpdate = (props) => {
               </div>
               <input
                 type="date"
-                {...register("dateOfPurchase", {
-                  validate: (v) => validateField(v, "Date of Purchase"),
-                })}
+                {...register("dateOfPurchase")}
                 name="dateOfPurchase"
                 className="input input-bordered w-full lg:max-w-xs"
               />
             </label>
-            {errors.dateOfPurchase && (
-              <p className="text-xs text-red-600 ps-2 mt-1">
-                {errors.dateOfPurchase.message}
-              </p>
-            )}
 
+            {/* --- CHANGED: Date of Expiry is now COMPLETELY OPTIONAL --- */}
             <label className="form-control w-full lg:max-w-xs px-2">
               <div className="label">
                 <span className="label-text">Date of Expiry</span>
               </div>
               <input
                 type="date"
-                {...register("dateOfExpiry", {
-                  validate: (v) =>
-                    props.updateObj.category === "chemical"
-                      ? validateField(v, "Date of Expiry")
-                      : true,
-                })}
+                {...register("dateOfExpiry")} // Removed 'validate' property
                 name="dateOfExpiry"
                 className="input input-bordered w-full lg:max-w-xs"
               />
             </label>
-            {errors.dateOfExpiry && (
-              <p className="text-xs text-red-600 ps-2 mt-1">
-                {errors.dateOfExpiry.message}
-              </p>
-            )}
+            {/* Error message removed since it's optional */}
           </>
         );
       case "plasticware":
@@ -206,19 +194,12 @@ const ModalUpdate = (props) => {
               </div>
               <input
                 type="text"
-                {...register("brand", {
-                  validate: (v) => validateField(v, "Brand"),
-                })}
+                {...register("brand")}
                 name="brand"
                 placeholder="Type here"
                 className="input input-bordered w-full lg:max-w-xs"
               />
             </label>
-            {errors.brand && (
-              <p className="text-xs text-red-600 ps-2 mt-1">
-                {errors.brand.message}
-              </p>
-            )}
 
             <label className="form-control w-full lg:max-w-xs px-2">
               <div className="label">
@@ -226,19 +207,12 @@ const ModalUpdate = (props) => {
               </div>
               <input
                 type="text"
-                {...register("lotNo", {
-                  validate: (v) => validateField(v, "Lot Number"),
-                })}
+                {...register("lotNo")}
                 name="lotNo"
                 placeholder="Type here"
                 className="input input-bordered w-full lg:max-w-xs"
               />
             </label>
-            {errors.lotNo && (
-              <p className="text-xs text-red-600 ps-2 mt-1">
-                {errors.lotNo.message}
-              </p>
-            )}
 
             <label className="form-control w-full lg:max-w-xs px-2">
               <div className="label">
@@ -246,18 +220,11 @@ const ModalUpdate = (props) => {
               </div>
               <input
                 type="date"
-                {...register("dateOfPurchase", {
-                  validate: (v) => validateField(v, "Date of Purchase"),
-                })}
+                {...register("dateOfPurchase")}
                 name="dateOfPurchase"
                 className="input input-bordered w-full lg:max-w-xs"
               />
             </label>
-            {errors.dateOfPurchase && (
-              <p className="text-xs text-red-600 ps-2 mt-1">
-                {errors.dateOfPurchase.message}
-              </p>
-            )}
           </>
         );
       default:
@@ -288,14 +255,15 @@ const ModalUpdate = (props) => {
                 />
               </label>
 
+              {/* Product Name - Still Required */}
               <label className="form-control w-full lg:max-w-xs px-2">
                 <div className="label">
-                  <span className="label-text">Product Name</span>
+                  <span className="label-text">Product Name *</span>
                 </div>
                 <input
                   type="text"
                   {...register("name", {
-                    validate: (v) => validateField(v, "Product Name"),
+                    validate: (v) => validateRequired(v, "Product Name"),
                   })}
                   name="name"
                   placeholder="Type here"
@@ -308,6 +276,7 @@ const ModalUpdate = (props) => {
                 </p>
               )}
 
+              {/* Optional Quantity */}
               <label className="form-control w-full lg:max-w-xs px-2">
                 <div className="label">
                   <span className="label-text">Quantity Ordered</span>
@@ -329,6 +298,7 @@ const ModalUpdate = (props) => {
                 </p>
               )}
 
+              {/* Optional Quantity */}
               <label className="form-control w-full lg:max-w-xs px-2">
                 <div className="label">
                   <span className="label-text">Quantity Available</span>

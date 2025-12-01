@@ -21,11 +21,11 @@ const productSchema = new mongoose.Schema({
   },
   quantityOrdered: {
     type: String,
-    required: true,
+    //required: true,
   },
   quantityAvailable: {
     type: String,
-    required: true,
+    //required: true,
   },
   brand: {
     type: String,
@@ -35,7 +35,7 @@ const productSchema = new mongoose.Schema({
   },
   dateOfPurchase: {
     type: Date,
-    required: true,
+    //required: true,
   },
   dateOfExpiry: {
     type: Date, // only for chemicals

@@ -48,11 +48,11 @@ export const insertProductController = async (req, res) => {
     }
 
     // Category-specific validation
-    if (obj.category === "chemical" && !obj.dateOfExpiry) {
-      return res
-        .status(400)
-        .json({ status: false, message: "Chemicals require expiry date" });
-    }
+    // if (obj.category === "chemical" && !obj.dateOfExpiry) {
+    //   return res
+    //     .status(400)
+    //     .json({ status: false, message: "Chemicals require expiry date" });
+    // }
 
     await Product.create(obj);
 
